@@ -1,46 +1,78 @@
 import { defineStore } from 'pinia'
 import router from '@/router'
-import axios from '@/utils/axios'
 
 //localImport
-import type { User } from '@/models/AuthModels'
-import { useSessionStore } from '@/stores/sessionStore'
+import { apiInstance } from '@/services/apiInstance'
+import type { Credentials, SesionState } from '@/models/CredentialsModel'
+import { Login, CreateUser, Logout } from '@/services/auth/AuthController'
 
 export const useAuthStore = defineStore({
   id: 'auth',
-  state: () => ({
-    auth: {} as {
-      loading: boolean
-      user: User | undefined | null
-      refreshTokenTimeout: number | null
+  state: (): SesionState => ({
+    loading: false,
+    data: {
+      user: undefined,
+      csrfToken: undefined,
+      jwtExpires: undefined,
     },
+    error: '',
   }),
   actions: {
-    async login(username: string, password: string) {
-      const response = await axios.post('/auth/login', {
-        email: this.auth.user?.email,
-        password: this.auth.user?.password,
-      })
-      localStorage.setItem('token', response.data.token)
-      router.push('/')
-      this.startRefreshTokenTimer()
+    changeCsrfToken() {
+      const headers = apiInstance.defaults.headers // obtenemos los headers de nuestra instancia apiInstance
+      this.data!.csrfToken = headers['csrf-token']?.toString() // pareaseamos a string el token y actualizamos el estado
+      console.info('[SesionStore] CRSF Token Actualizado') // noficamos por consola
     },
-    async register(data: User) {
-      await axios.post('/auth/signup', data)
+    async login(credentials: Credentials) {
+      this.loading = true
+      try {
+        const response = await Login(credentials)
+        if (response.status === 200) {
+          this.data!.user = credentials
+          const currentEpochTime = Math.floor(Date.now() / 1000)
+          this.data!.jwtExpires = currentEpochTime + 3 * 60
+          this.loading = false
+          this.startRefreshTokenTimer()
+          router.push('/tasks')
+        } else {
+          // Si la respuesta no es 200, establecemos un error
+          this.error = `Login failed with status: ${response.status}`
+          this.loading = false
+        }
+      } catch (e) {
+        this.error = e!.toString()
+      }
     },
     async logout() {
-      const response = await axios.post('/auth/logout')
+      const response = await Logout()
       this.stopRefreshTokenTimer()
-      this.auth.user = null
-      router.push('/login')
+      this.data!.user = undefined
+      router.push('/')
+    },
+    async registerUser(credentials: Credentials) {
+      this.loading = true
+      try {
+        const response = await CreateUser(credentials)
+
+        if (response.status === 201) {
+          this.data!.user = credentials
+          this.login(credentials)
+          this.loading = false
+        }
+      } catch (e) {
+        this.error = e!.toString()
+      }
     },
     async refreshToken() {
-      //CORREGIR
-      const response = await axios.get('/auth/csrf', {})
-      localStorage.setItem('token', response.data.token)
-      this.startRefreshTokenTimer()
+      /* this.auth.user = await fetchWrapper.post(
+        `${baseUrl}/refresh-token`,
+        {},
+        { credentials: 'include' },
+      )
+      this.startRefreshTokenTimer()*/
     },
     startRefreshTokenTimer() {
+      /*
       const sessionStore = useSessionStore()
       if (!this.auth.user || !this.auth.user?.jwtToken) return
 
@@ -55,12 +87,12 @@ export const useAuthStore = defineStore({
       this.auth.refreshTokenTimeout = setTimeout(this.refreshToken, timeout)
       //Save de session vars in the session store
       sessionStore.update(jwtBase64, new Date(Date.now()), new Date(Date.now() + timeout), expires)
+      */
     },
     stopRefreshTokenTimer() {
-      if (this.auth.refreshTokenTimeout) {
+      /*if (this.auth.refreshTokenTimeout) {
         clearTimeout(this.auth.refreshTokenTimeout)
-        this.auth.refreshTokenTimeout = null
-      }
+        this.auth.refreshTokenTimeout = null */
     },
   },
 })
