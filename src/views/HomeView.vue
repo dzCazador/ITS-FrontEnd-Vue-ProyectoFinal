@@ -15,17 +15,17 @@ const sections = ref([
 </script>
 
 <template>
-  <div class="w-full px-2 py-16 sm:px-0" v-bind:class="theme.isDark ? 'dark' : ''">
+  <div class="w-full px-2 py-16 sm:px-0 min-h-screen" v-bind:class="theme.isDark ? 'dark' : ''">
     <TabGroup>
       <TabList class="flex space-x-1 rounded-xl bg-blue-900/20 dark:bg-gray-800 p-1">
         <Tab v-for="section in sections" as="template" :key="section.text" v-slot="{ selected }">
           <button
-            :class="[
-              'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
-              'ring-white/60 ring-offset-2 ring-offset-blue-400  dark:ring-offset-gray-600 focus:outline-none focus:ring-2',
-              selected
-                ? 'bg-white text-blue-700  dark:bg-gray-500 dark:text-white  shadow'
-                : 'text-blue-100 hover:bg-white/[0.12] hover:text-white',
+            :class="[ 
+              'w-full rounded-lg py-2.5 text-sm font-medium leading-5', 
+              'ring-white/60 ring-offset-2 ring-offset-blue-400 dark:ring-offset-gray-600 focus:outline-none focus:ring-2', 
+              selected 
+                ? 'bg-white text-blue-700 dark:bg-gray-500 dark:text-white shadow' 
+                : 'text-blue-100 hover:bg-white/[0.12] hover:text-white', 
             ]"
           >
             {{ section.text }}
@@ -40,3 +40,4 @@ const sections = ref([
     </TabGroup>
   </div>
 </template>
+
