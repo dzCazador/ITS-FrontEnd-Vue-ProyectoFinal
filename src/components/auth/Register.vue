@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/authStore'
 const theme = useThemeStore()
 const auth = reactive(useAuthStore())
 
+const isLoading = ref(false) // Estado de carga para el spinner
 const repeatPwd = ref('')
 const reactiveCredentials = reactive({
   email: '',
@@ -13,13 +14,23 @@ const reactiveCredentials = reactive({
 })
 
 async function register() {
-  if (repeatPwd.value === reactiveCredentials.password) {
-    await auth.registerUser(reactiveCredentials)
-  } else {
+  if (repeatPwd.value !== reactiveCredentials.password) {
     alert('Las passwords no coinciden')
+    return
+  }
+
+  isLoading.value = true // Activar el spinner
+  try {
+    await auth.registerUser(reactiveCredentials)
+    // Manejar éxito del registro
+  } catch (error) {
+    console.error(error)
+  } finally {
+    isLoading.value = false // Desactivar el spinner
   }
 }
 </script>
+
 
 <template>
   <div :class="{ dark: theme.isDark }" class="flex flex-col items-center h-screen">
@@ -47,12 +58,36 @@ async function register() {
           type="password"
         />
         <button
-          class="bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-150"
+          class="bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-150 flex items-center justify-center"
           type="submit"
+          :disabled="isLoading"
         >
-          Registrate
+          <svg
+            v-if="isLoading"
+            class="animate-spin h-5 w-5 text-white mr-2"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+          <span v-if="isLoading">Cargando...</span>
+          <span v-else>Registrate</span>
         </button>
       </form>
     </div>
   </div>
 </template>
+

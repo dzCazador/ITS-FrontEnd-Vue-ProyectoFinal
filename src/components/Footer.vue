@@ -11,12 +11,18 @@ const theme = useThemeStore()
   >
     <div class="container mx-auto text-center">
       <p class="text-lg font-bold mb-2">
-        Integrantes:
+        <span class="text-black-500">TRABAJO PRACTICO FINAL GRUPAL</span>  
+      </p>
+      <p class="text-lg font-bold mb-2">
+        INTEGRANTES:
         <span class="text-orange-500">Cristian Testaseca</span> - 
         <span class="text-blue-500">Manuel Caporaso</span>
       </p>
       <p class="text-sm text-gray-600 dark:text-gray-400">
-        Frontend 2024 - Instituto Tecnico Superior
+        Materia: Programación Frontend - 2do año -  Instituto Tecnico Superior Cipolletti
+      </p>
+      <p class="text-sm text-gray-600 dark:text-gray-400">
+        Tecnicatura en Desarrollo de Software Full Stack - Noviembre 2024
       </p>
       <div class="mt-4 flex justify-center space-x-4">
         <!-- GitHub Logo -->

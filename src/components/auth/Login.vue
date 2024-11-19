@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useThemeStore } from '@/stores/ThemeStore'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -7,14 +7,25 @@ import { useAuthStore } from '@/stores/authStore'
 const theme = useThemeStore()
 const auth = useAuthStore()
 
+const isLoading = ref(false) // Estado de carga para el spinner
+
 const reactiveCredentials = reactive({
   email: '',
   password: '',
 })
 
 auth.changeCsrfToken()
+
 async function login() {
-  const response = await auth.login(reactiveCredentials)
+  isLoading.value = true // Activar el spinner
+  try {
+    await auth.login(reactiveCredentials)
+    // Manejar respuesta o redirección aquí si es necesario
+  } catch (error) {
+    console.error(error)
+  } finally {
+    isLoading.value = false // Desactivar el spinner
+  }
 }
 </script>
 
@@ -36,14 +47,35 @@ async function login() {
           type="password"
         />
         <button
-          class="bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-150"
+          class="bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-150 flex items-center justify-center"
           type="submit"
+          :disabled="isLoading"
         >
-          Login
+          <svg
+            v-if="isLoading"
+            class="animate-spin h-5 w-5 text-white mr-2"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+          <span v-if="isLoading">Cargando...</span>
+          <span v-else>Login</span>
         </button>
-        <small v-if="auth.error === '' ? false : true" class="text-center text-red-500 text-sm">{{
-          auth.error
-        }}</small>
+        <small v-if="auth.error" class="text-center text-red-500 text-sm">{{ auth.error }}</small>
       </form>
     </div>
   </div>
