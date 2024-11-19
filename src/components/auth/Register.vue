@@ -24,7 +24,9 @@ async function register() {
 <template>
   <div :class="{ dark: theme.isDark }" class="flex flex-col items-center h-screen">
     <div class="w-full max-w-md bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md p-6">
-      <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Register</h2>
+      <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+        Registrar Nuevo Usuario
+      </h2>
       <form class="flex flex-col" @submit.prevent="register()">
         <input
           v-model="reactiveCredentials.email"
@@ -54,4 +56,3 @@ async function register() {
     </div>
   </div>
 </template>
-

@@ -14,7 +14,6 @@ export async function CreateUser(credentials: Credentials) {
 }
 
 export async function Login(credentials: Credentials) {
-  console.log(JSON.stringify(apiInstance))
   const response = await apiInstance.post<APIResponse<AuthApiResponseModel>>(
     '/auth/login',
     credentials,
@@ -22,6 +21,7 @@ export async function Login(credentials: Credentials) {
       withCredentials: true, // necesario para la obtenecion de cookies
     },
   )
+
   // seteamos la cookie en los headers para futuras consultas
   const setCookieHeader = response.headers['set-cookie']
   return response

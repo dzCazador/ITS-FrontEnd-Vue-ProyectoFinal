@@ -13,14 +13,14 @@ const reactiveCredentials = reactive({
 
 auth.changeCsrfToken()
 async function login() {
-  await auth.login(reactiveCredentials).then(console.log(auth.error))
+  const response = await auth.login(reactiveCredentials)
 }
 </script>
 
 <template>
   <div :class="{ dark: theme.isDark }" class="flex flex-col items-center h-screen">
     <div class="w-full max-w-md bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md p-6">
-      <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Login</h2>
+      <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Ingreso</h2>
       <form class="flex flex-col" @submit.prevent="login()">
         <input
           v-model="reactiveCredentials.email"
@@ -40,8 +40,10 @@ async function login() {
         >
           Login
         </button>
+        <small v-if="auth.error === '' ? false : true" class="text-center text-red-500 text-sm">{{
+          auth.error
+        }}</small>
       </form>
     </div>
   </div>
 </template>
-

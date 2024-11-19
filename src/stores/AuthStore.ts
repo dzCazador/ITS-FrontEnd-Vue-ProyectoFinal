@@ -24,9 +24,10 @@ export const useAuthStore = defineStore({
       console.info('[SesionStore] CRSF Token Actualizado') // noficamos por consola
     },
     async login(credentials: Credentials) {
-      this.loading = true
+      this.loading = true // para el spinner
       try {
         const response = await Login(credentials)
+
         if (response.status === 200) {
           this.data!.user = credentials
           const currentEpochTime = Math.floor(Date.now() / 1000)
