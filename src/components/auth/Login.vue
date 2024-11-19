@@ -3,8 +3,9 @@ import { reactive } from 'vue'
 import { useThemeStore } from '@/stores/ThemeStore'
 import { useAuthStore } from '@/stores/authStore'
 
+// pinia return reactive components
 const theme = useThemeStore()
-const auth = reactive(useAuthStore())
+const auth = useAuthStore()
 
 const reactiveCredentials = reactive({
   email: '',

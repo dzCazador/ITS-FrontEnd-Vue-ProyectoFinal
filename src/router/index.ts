@@ -15,6 +15,11 @@ const router = createRouter({
       name: 'tasks',
       component: TaskView,
     },
+    // Ruta comodín para redirigir a la página de inicio en caso de rutas no encontradas
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/',
+    },
   ],
 })
 

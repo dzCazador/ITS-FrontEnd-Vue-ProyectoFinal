@@ -6,7 +6,6 @@ import { useThemeStore } from '@/stores/ThemeStore'
 
 // tema para el estilo del sitio, pinia ya retorna un elemento rectivo
 const theme = useThemeStore()
-
 const tasks = useTaskStore()
 
 // Estado para el formulario
@@ -41,30 +40,28 @@ const edittask = (task) => {
   showCreateModal.value = true
 }
 
-const deletetask = (id) => {
-  const index = tasks.value.findIndex((task) => task.id === id)
-  if (index !== -1) {
-    tasks.value.splice(index, 1)
-  }
+const deletetask = (task) => {
+  if (confirm('¿Estás seguro de que deseas eliminar esta tarea?')) tasks.delete(task)
 }
 
 const resetForm = () => {
-  form = { id: null, title: '', description: '' }
+  form.id = null
+  form.title = ''
+  form.description = ''
   isEditing.value = false
 }
 
 //Traer todas las tareas
 onMounted(() => {
-  console.log(tasks)
   tasks.getAll()
 })
 </script>
 
 <template>
-  <div class="container mx-auto p-3">
+  <div class="container mx-auto p-3 sm:px-0 min-h-screen">
     <div class="mb-4">
       <button
-        @click="showCreateModal = true"
+        @click="resetForm(), (showCreateModal = true)"
         class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
       >
         Agregar Nuevo
@@ -72,7 +69,9 @@ onMounted(() => {
     </div>
 
     <!-- Tabla de Datos -->
-    <table class="min-w-full table-auto bg-white border border-gray-300 rounded-lg shadow-md">
+    <table
+      class="min-w-full table-auto bg-white border border-gray-300 rounded-lg shadow-md dark:bg-gray-700 dark:text-white"
+    >
       <thead>
         <tr>
           <th class="px-4 py-2 text-left">Id</th>
@@ -88,13 +87,13 @@ onMounted(() => {
           <td class="px-4 py-2">{{ task.description }}</td>
           <td class="px-4 py-2">
             <button
-              @click="console.log(task), edittask(task)"
+              @click="edittask(task)"
               class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600"
             >
               Editar
             </button>
             <button
-              @click="deletetask(task.id)"
+              @click="deletetask(task)"
               class="bg-red-500 text-white px-2 py-1 rounded ml-2 hover:bg-red-600"
             >
               Eliminar
@@ -107,7 +106,7 @@ onMounted(() => {
     <!-- Modal para Crear/Editar -->
     <div
       v-if="showCreateModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center tasks-center"
+      class="fixed inset-x-0 top-20 bg-black bg-opacity-50 flex justify-center items-star"
     >
       <div class="bg-white p-6 rounded-lg shadow-md w-96">
         <h3 class="text-xl font-semibold mb-4">{{ isEditing ? 'Editar' : 'Agregar' }} Tarea</h3>
@@ -135,13 +134,12 @@ onMounted(() => {
           </div>
           <div class="mb-4">
             <label for="description" class="block text-gray-700">Descripci&oacute;n</label>
-            <input
+            <textarea
               v-model="form.description"
-              type="text"
-              id="titles"
-              class="w-full px-4 py-2 border rounded-md"
+              id="description"
+              class="w-full px-4 py-10 border rounded-md"
               required
-            />
+            ></textarea>
           </div>
 
           <div class="flex justify-between">
