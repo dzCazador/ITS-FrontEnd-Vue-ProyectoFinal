@@ -7,6 +7,11 @@ import { useAuthStore } from '@/stores/authStore'
 const theme = useThemeStore()
 const auth = useAuthStore()
 
+const errors = reactive({
+  email: '',
+  password: '',
+})
+
 const isLoading = ref(false) // Estado de carga para el spinner
 
 const reactiveCredentials = reactive({
@@ -39,12 +44,14 @@ async function login() {
           placeholder="Email"
           class="bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           type="email"
+          required
         />
         <input
           v-model="reactiveCredentials.password"
           placeholder="Password"
           class="bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           type="password"
+          required
         />
         <button
           class="bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-150 flex items-center justify-center"
