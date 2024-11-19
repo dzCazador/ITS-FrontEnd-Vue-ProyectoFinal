@@ -88,6 +88,7 @@ async function register() {
           <span v-if="isLoading">Cargando...</span>
           <span v-else>Registrate</span>
         </button>
+        <small v-if="auth.error" class="text-center text-red-500 text-sm">{{ auth.error }}</small>
       </form>
     </div>
   </div>

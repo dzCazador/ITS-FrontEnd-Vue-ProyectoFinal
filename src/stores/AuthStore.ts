@@ -33,7 +33,7 @@ export const useAuthStore = defineStore({
           const currentEpochTime = Math.floor(Date.now() / 1000)
           this.data!.jwtExpires = currentEpochTime + 3 * 60
           this.loading = false
-          this.startRefreshTokenTimer()
+          this.error = ''
           router.push('/tasks')
         } else {
           // Si la respuesta no es 200, establecemos un error
@@ -46,7 +46,6 @@ export const useAuthStore = defineStore({
     },
     async logout() {
       const response = await Logout()
-      this.stopRefreshTokenTimer()
       this.data!.user = undefined
       router.push('/')
     },
@@ -59,41 +58,14 @@ export const useAuthStore = defineStore({
           this.data!.user = credentials
           this.login(credentials)
           this.loading = false
+        } else {
+          // Si la respuesta no es 201, establecemos un error
+          this.error = `Registration failed with status: ${response.statusText}`
+          this.loading = false
         }
       } catch (e) {
         this.error = e!.toString()
       }
-    },
-    async refreshToken() {
-      /* this.auth.user = await fetchWrapper.post(
-        `${baseUrl}/refresh-token`,
-        {},
-        { credentials: 'include' },
-      )
-      this.startRefreshTokenTimer()*/
-    },
-    startRefreshTokenTimer() {
-      /*
-      const sessionStore = useSessionStore()
-      if (!this.auth.user || !this.auth.user?.jwtToken) return
-
-      //to parse base64 json object
-      const jwtBase64 = this.auth.user?.jwtToken.split('.')[1]
-      const decodedJwtToken = JSON.parse(atob(jwtBase64))
-
-      //Create a timeout to refresh the token before expires
-      const expires = new Date(decodedJwtToken.exp * 1000)
-      const timeout = expires.getTime() - Date.now() - 60 * 1000
-
-      this.auth.refreshTokenTimeout = setTimeout(this.refreshToken, timeout)
-      //Save de session vars in the session store
-      sessionStore.update(jwtBase64, new Date(Date.now()), new Date(Date.now() + timeout), expires)
-      */
-    },
-    stopRefreshTokenTimer() {
-      /*if (this.auth.refreshTokenTimeout) {
-        clearTimeout(this.auth.refreshTokenTimeout)
-        this.auth.refreshTokenTimeout = null */
     },
   },
 })
